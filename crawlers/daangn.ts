@@ -101,14 +101,19 @@ async function crawlDaangn() {
     const postedAt = parsed && !isNaN(parsed.getTime()) ? parsed.toISOString() : new Date().toISOString();
 
     const otherSpans = spans.filter((s) => s !== title && !/[\d,]+\s*원/.test(s) && s.length < 20);
-    const location = otherSpans.length > 0 ? otherSpans[0] : null;
+    const location = otherSpans.find((s) => !/^(판매완료|예약중|나눔)$/.test(s)) ?? null;
+
+    const cardText = $a.text();
+    let status: string | null = 'active';
+    if (/판매완료/.test(cardText)) status = 'sold';
+    else if (/예약중/.test(cardText)) status = 'reserved';
 
     try {
       const result = await db.execute({
         sql: `INSERT OR IGNORE INTO listings
-              (source, source_id, title, price, url, image_url, brand, model, location, posted_at)
-              VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-        args: ['daangn', sourceId, title, price, fullUrl, thumb, null, null, location, postedAt],
+              (source, source_id, title, price, url, image_url, brand, model, location, posted_at, status)
+              VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        args: ['daangn', sourceId, title, price, fullUrl, thumb, null, null, location, postedAt, status],
       });
       if (result.rowsAffected > 0) insertedCount++;
     } catch (err) {

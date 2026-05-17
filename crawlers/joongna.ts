@@ -93,8 +93,8 @@ async function crawlJoongna() {
     try {
       const result = await db.execute({
         sql: `INSERT OR IGNORE INTO listings
-              (source, source_id, title, price, url, image_url, brand, model, location, posted_at)
-              VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+              (source, source_id, title, price, url, image_url, brand, model, location, posted_at, status)
+              VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
         args: [
           'joongna',
           sno,
@@ -106,6 +106,7 @@ async function crawlJoongna() {
           null,
           null,
           postedAt,
+          null,
         ],
       });
       if (result.rowsAffected > 0) insertedCount++;

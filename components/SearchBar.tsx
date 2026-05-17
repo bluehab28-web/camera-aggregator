@@ -13,46 +13,84 @@ const SOURCES = [
 export default function SearchBar({
   initialQuery,
   initialSource,
+  initialPriceMin,
+  initialPriceMax,
+  initialIncludeSold,
   counts,
 }: {
   initialQuery: string;
   initialSource: string;
+  initialPriceMin: string;
+  initialPriceMax: string;
+  initialIncludeSold: boolean;
   counts: Record<string, number>;
 }) {
   const router = useRouter();
   const params = useSearchParams();
   const [q, setQ] = useState(initialQuery);
+  const [priceMin, setPriceMin] = useState(initialPriceMin);
+  const [priceMax, setPriceMax] = useState(initialPriceMax);
 
-  function submit(e: React.FormEvent) {
-    e.preventDefault();
+  function buildParams(overrides: Record<string, string | null>) {
     const next = new URLSearchParams(params.toString());
-    if (q.trim()) next.set('q', q.trim());
-    else next.delete('q');
+    for (const [k, v] of Object.entries(overrides)) {
+      if (v === null || v === '') next.delete(k);
+      else next.set(k, v);
+    }
+    return next;
+  }
+
+  function submitSearch(e: React.FormEvent) {
+    e.preventDefault();
+    const next = buildParams({
+      q: q.trim() || null,
+      price_min: priceMin.trim() || null,
+      price_max: priceMax.trim() || null,
+    });
     router.push(`/?${next.toString()}`);
   }
 
   function setSource(key: string) {
-    const next = new URLSearchParams(params.toString());
-    if (key) next.set('source', key);
-    else next.delete('source');
-    router.push(`/?${next.toString()}`);
+    router.push(`/?${buildParams({ source: key || null }).toString()}`);
   }
+
+  function toggleSold() {
+    router.push(`/?${buildParams({ include_sold: initialIncludeSold ? null : '1' }).toString()}`);
+  }
+
+  const inputStyle: React.CSSProperties = {
+    padding: '10px 14px',
+    fontSize: 14,
+    border: '1px solid #ddd',
+    borderRadius: 8,
+    background: '#fff',
+  };
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-      <form onSubmit={submit} style={{ display: 'flex', gap: 8 }}>
+      <form onSubmit={submitSearch} style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
         <input
           value={q}
           onChange={(e) => setQ(e.target.value)}
-          placeholder="제목으로 검색 (예: 캐논, 소니, 5D, RX100)"
-          style={{
-            flex: 1,
-            padding: '10px 14px',
-            fontSize: 14,
-            border: '1px solid #ddd',
-            borderRadius: 8,
-            background: '#fff',
-          }}
+          placeholder="제목 검색 (예: 캐논, 소니, 5D, RX100)"
+          style={{ ...inputStyle, flex: '1 1 220px', minWidth: 180 }}
+        />
+        <input
+          type="number"
+          value={priceMin}
+          onChange={(e) => setPriceMin(e.target.value)}
+          placeholder="최소가격"
+          style={{ ...inputStyle, width: 110 }}
+          min={0}
+        />
+        <span style={{ alignSelf: 'center', color: '#999' }}>~</span>
+        <input
+          type="number"
+          value={priceMax}
+          onChange={(e) => setPriceMax(e.target.value)}
+          placeholder="최대가격"
+          style={{ ...inputStyle, width: 110 }}
+          min={0}
         />
         <button
           type="submit"
@@ -70,7 +108,7 @@ export default function SearchBar({
           검색
         </button>
       </form>
-      <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+      <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', alignItems: 'center' }}>
         {SOURCES.map((s) => {
           const active = (initialSource || '') === s.key;
           const n = s.key ? counts[s.key] ?? 0 : Object.values(counts).reduce((a, b) => a + b, 0);
@@ -92,6 +130,11 @@ export default function SearchBar({
             </button>
           );
         })}
+        <span style={{ width: 1, height: 20, background: '#ddd', margin: '0 4px' }} />
+        <label style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: 13, cursor: 'pointer' }}>
+          <input type="checkbox" checked={initialIncludeSold} onChange={toggleSold} />
+          판매완료 포함
+        </label>
       </div>
     </div>
   );

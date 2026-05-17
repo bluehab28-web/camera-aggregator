@@ -8,6 +8,11 @@ const SOURCE_LABELS: Record<string, string> = {
   clien: '클리앙',
 };
 
+const STATUS_BADGE: Record<string, { label: string; bg: string }> = {
+  reserved: { label: '예약중', bg: '#f59e0b' },
+  sold: { label: '판매완료', bg: '#6b7280' },
+};
+
 function formatPrice(price: number | null): string {
   if (!price) return '가격 문의';
   return price.toLocaleString('ko-KR') + '원';
@@ -69,6 +74,22 @@ export default function ListingCard({ listing }: { listing: Listing }) {
         >
           {SOURCE_LABELS[listing.source] ?? listing.source}
         </span>
+        {listing.status && STATUS_BADGE[listing.status] ? (
+          <span
+            style={{
+              position: 'absolute',
+              top: 8,
+              right: 8,
+              background: STATUS_BADGE[listing.status].bg,
+              color: '#fff',
+              fontSize: 11,
+              padding: '2px 6px',
+              borderRadius: 4,
+            }}
+          >
+            {STATUS_BADGE[listing.status].label}
+          </span>
+        ) : null}
       </div>
       <div style={{ padding: '12px 14px' }}>
         <p

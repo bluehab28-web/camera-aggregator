@@ -30,13 +30,27 @@ async function setup() {
       location TEXT,
       posted_at TEXT,
       crawled_at TEXT DEFAULT (datetime('now')),
+      status TEXT,
       UNIQUE(source, source_id)
     )
   `);
 
+  try {
+    await db.execute(`ALTER TABLE listings ADD COLUMN status TEXT`);
+    console.log('[setup] status 컬럼 추가됨');
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : String(err);
+    if (msg.includes('duplicate column')) {
+      console.log('[setup] status 컬럼 이미 존재함');
+    } else {
+      throw err;
+    }
+  }
+
   console.log('[setup] 인덱스 생성 중...');
   await db.execute(`CREATE INDEX IF NOT EXISTS idx_listings_source ON listings(source)`);
   await db.execute(`CREATE INDEX IF NOT EXISTS idx_listings_posted_at ON listings(posted_at DESC)`);
+  await db.execute(`CREATE INDEX IF NOT EXISTS idx_listings_status ON listings(status)`);
 
   const count = await db.execute('SELECT COUNT(*) AS n FROM listings');
   console.log(`[setup] 완료. 현재 listings 행 수: ${count.rows[0].n}`);

@@ -18,4 +18,5 @@ export interface Listing {
   location: string | null;
   posted_at: string | null;
   crawled_at: string;
+  status: string | null;
 }
