@@ -1,32 +1,32 @@
 {
-  "name": "camera-aggregator",
-  "version": "0.1.0",
-  "private": true,
-  "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "next lint",
-    "setup-db": "node --env-file=.env.local --import tsx scripts/setup-db.ts",
-    "crawl:bunjang": "node --env-file=.env.local --import tsx crawlers/bunjang.ts",
-    "crawl:joongna": "node --env-file=.env.local --import tsx crawlers/joongna.ts",
-    "crawl:daangn": "node --env-file=.env.local --import tsx crawlers/daangn.ts",
-    "crawl:clien": "node --env-file=.env.local --import tsx crawlers/clien.ts"
-  },
-  "dependencies": {
-    "@libsql/client": "^0.14.0",
-    "cheerio": "^1.2.0",
-    "fast-xml-parser": "^4.5.0",
-    "next": "^16.2.6",
-    "node-html-parser": "^6.1.13",
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0"
-  },
-  "devDependencies": {
-    "@types/node": "^20",
-    "@types/react": "^19",
-    "@types/react-dom": "^19",
-    "tsx": "^4.22.1",
-    "typescript": "^5"
-  }
+    "name": "camera-aggregator",
+    "version": "0.1.0",
+    "private": true,
+    "scripts": {
+          "dev": "next dev",
+          "build": "next build",
+          "start": "next start",
+          "lint": "next lint",
+          "setup-db": "node --env-file=.env.local --import tsx scripts/setup-db.ts",
+          "crawl:bunjang": "node --env-file=.env.local --import tsx crawlers/bunjang.ts",
+          "crawl:joongna": "node --env-file=.env.local --import tsx crawlers/joongna.ts",
+          "crawl:daangn": "node --env-file=.env.local --import tsx crawlers/daangn.ts",
+          "crawl:clien": "node --env-file=.env.local --import tsx crawlers/clien.ts"
+    },
+    "dependencies": {
+          "@libsql/client": "^0.17.0",
+          "cheerio": "^1.2.0",
+          "fast-xml-parser": "^4.5.0",
+          "next": "^16.2.6",
+          "node-html-parser": "^6.1.13",
+          "react": "^19.0.0",
+          "react-dom": "^19.0.0"
+    },
+    "devDependencies": {
+          "@types/node": "^20",
+          "@types/react": "^19",
+          "@types/react-dom": "^19",
+          "tsx": "^4.22.1",
+          "typescript": "^5"
+    }
 }
