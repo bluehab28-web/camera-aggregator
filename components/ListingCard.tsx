@@ -1,0 +1,98 @@
+'use client';
+import { Listing } from '@/lib/db';
+
+const SOURCE_LABELS: Record<string, string> = {
+  bunjang: '번개장터',
+  joongna: '중고나라',
+  daangn: '당근마켓',
+  clien: '클리앙',
+};
+
+function formatPrice(price: number | null): string {
+  if (!price) return '가격 문의';
+  return price.toLocaleString('ko-KR') + '원';
+}
+
+function formatDate(dateStr: string | null): string {
+  if (!dateStr) return '';
+  const d = new Date(dateStr);
+  return d.toLocaleDateString('ko-KR', { month: 'short', day: 'numeric' });
+}
+
+export default function ListingCard({ listing }: { listing: Listing }) {
+  return (
+    <a
+      href={listing.url}
+      target="_blank"
+      rel="noopener noreferrer"
+      style={{
+        display: 'block',
+        background: '#fff',
+        borderRadius: 12,
+        overflow: 'hidden',
+        textDecoration: 'none',
+        color: 'inherit',
+        boxShadow: '0 1px 4px rgba(0,0,0,0.08)',
+      }}
+    >
+      <div style={{ position: 'relative', aspectRatio: '4/3', background: '#f0f0f0' }}>
+        {listing.image_url ? (
+          <img
+            src={listing.image_url}
+            alt={listing.title}
+            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+          />
+        ) : (
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              height: '100%',
+              fontSize: 40,
+            }}
+          >
+            📷
+          </div>
+        )}
+        <span
+          style={{
+            position: 'absolute',
+            top: 8,
+            left: 8,
+            background: '#000',
+            color: '#fff',
+            fontSize: 11,
+            padding: '2px 6px',
+            borderRadius: 4,
+          }}
+        >
+          {SOURCE_LABELS[listing.source] ?? listing.source}
+        </span>
+      </div>
+      <div style={{ padding: '12px 14px' }}>
+        <p
+          style={{
+            fontSize: 14,
+            fontWeight: 500,
+            marginBottom: 6,
+            lineHeight: 1.4,
+            overflow: 'hidden',
+            display: '-webkit-box',
+            WebkitLineClamp: 2,
+            WebkitBoxOrient: 'vertical',
+          }}
+        >
+          {listing.title}
+        </p>
+        <p style={{ fontSize: 16, fontWeight: 700, color: '#e53e3e', marginBottom: 4 }}>
+          {formatPrice(listing.price)}
+        </p>
+        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, color: '#999' }}>
+          <span>{listing.location ?? ''}</span>
+          <span>{formatDate(listing.crawled_at)}</span>
+        </div>
+      </div>
+    </a>
+  );
+}

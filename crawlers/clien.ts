@@ -1,5 +1,6 @@
 import { createClient } from '@libsql/client';
 import * as cheerio from 'cheerio';
+import { fetchUtf8 } from './_utils';
 
 const db = createClient({
   url: process.env.TURSO_DATABASE_URL!,
@@ -24,7 +25,7 @@ async function crawlClien() {
 
   const searchUrl = `${BASE_URL}/service/search?q=%EC%B9%B4%EB%A9%94%EB%9D%BC&sort=recency&boardCd=sold&isBoard=true`;
 
-  const res = await fetch(searchUrl, {
+  const res = await fetchUtf8(searchUrl, {
     headers: {
       'User-Agent':
         'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
@@ -40,7 +41,7 @@ async function crawlClien() {
     process.exit(1);
   }
 
-  const html = await res.text();
+  const html = res.text;
   console.log(`[clien] HTML 길이: ${html.length}`);
   const $ = cheerio.load(html);
 
