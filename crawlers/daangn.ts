@@ -43,7 +43,7 @@ async function crawlDaangn() {
 
   const html = res.text;
   console.log(`[daangn] HTML 길이: ${html.length}`);
-  const $ = cheerio.load(html);
+  const $ = cheerio.load(html, { scriptingEnabled: false });
 
   const $cards = $('a[data-gtm="search_article"]');
   console.log(`[daangn] search_article 카드 수: ${$cards.length}`);
